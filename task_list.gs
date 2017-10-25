@@ -1,0 +1,38 @@
+function postTaskList() {
+  var spreadsheet_id = PropertiesService.getScriptProperties().getProperty('SPREAD_SHEET_ID');
+  var dueTimeIcon = PropertiesService.getScriptProperties().getProperty('DUE_TIME_ICON_LINK');
+  var sheets = SpreadsheetApp.openById(spreadsheet_id);
+  var todoSheet = sheets.getSheetByName('todo');
+  var lastRow = todoSheet.getLastRow();
+  var a1Notation = 'A2:J' + lastRow.toString();
+  var taskRange = todoSheet.getRange(a1Notation);
+  var taskLen = taskRange.getNumRows();
+  var taskList = [];
+  for (var i = 1; i <= taskLen; i++) {
+    var status = taskRange.getCell(i,10).getValue();
+    if (status != "Active") continue;
+    
+    var task = {};
+    task["fallback"] = "";
+    task["color"] = "#36a64f";
+    task["mrkdwn_in"] = ["text", "pretext"];
+    var id = taskRange.getCell(i,1).getValue();
+    var taskContent = taskRange.getCell(i,7).getValue();
+    var dueTime = taskRange.getCell(i,3).getValue();
+    var participant = taskRange.getCell(i,8).getValue();
+    var remainTime = moment(dueTime).diff(moment(), "days");
+    var note = taskRange.getCell(i,9).getValue();
+    if (taskContent && id) task["pretext"] = ":boom: `" + taskContent + "` [ID: " + id + "] (Còn lại: " + remainTime + " ngày)";
+    if (participant) task["title"] = "Người thực hiện: " + participant;
+    if (note) task["text"] = "_ Note: " + note + " _";
+    if (dueTime) {
+      var ts = moment(dueTime, "YYYY/MM/DD HH:mm:ss").unix();
+      task["footer"] = "Hạn thực hiện";
+      task["footer_icon"] = dueTimeIcon;
+      task["ts"] = ts;
+    }
+    taskList.push(task);
+  }
+  postMessageWithAttachments("todo", taskList);
+}
+
