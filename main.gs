@@ -12,7 +12,7 @@ text=94070
 response_url=https://hooks.slack.com/commands/1234/5678
 */
 
-eval(UrlFetchApp.fetch('https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js').getContentText());
+eval(UrlFetchApp.fetch('https://momentjs.com/downloads/moment.min.js').getContentText());
 
 function doPost(request) {
   var params = request.parameters;
