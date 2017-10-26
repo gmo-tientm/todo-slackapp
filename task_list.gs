@@ -24,11 +24,12 @@ function postTaskList() {
     var note = taskRange.getCell(i,9).getValue();
     if (taskContent && id) task["pretext"] = ":boom: `" + taskContent + "` [ID: " + id + "] (Còn lại: " + remainTime + " ngày)";
     if (participant) {
+      var members = getUserList();
       var re = /\s*,\s*/;
       task["title"] = "Người thực hiện: ";
       var nameList = participant.split(re);
       for (var j = 0; j < nameList.length; j++) {
-        var id = findUserID(nameList[j]);
+        var id = findUserID(members, nameList[j]);
         if (id) task["title"] += ("<@" + id + ">");
         else task["title"] += nameList[j];
         if (j < nameList.length - 1) task["title"] += ", ";
