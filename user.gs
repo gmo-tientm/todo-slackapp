@@ -14,10 +14,10 @@ function getUserList() {
   }
 }
 
-function findUserID(name) {
-  var members = getUserList();
+function findUserID(members, name) {
   if (members) {
     for (var i = 0; i < members.length; i++) {
+      if (members[i].profile.display_name && members[i].profile.display_name == name) return members[i].id;
       if (members[i].real_name == name) return members[i].id;
     }
   }
