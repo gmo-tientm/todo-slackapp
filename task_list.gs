@@ -23,7 +23,17 @@ function postTaskList() {
     var remainTime = moment(dueTime).diff(moment(), "days");
     var note = taskRange.getCell(i,9).getValue();
     if (taskContent && id) task["pretext"] = ":boom: `" + taskContent + "` [ID: " + id + "] (Còn lại: " + remainTime + " ngày)";
-    if (participant) task["title"] = "Người thực hiện: " + participant;
+    if (participant) {
+      var re = /\s*,\s*/;
+      task["title"] = "Người thực hiện: ";
+      var nameList = participant.split(re);
+      for (var j = 0; j < nameList.length; j++) {
+        var id = findUserID(nameList[j]);
+        if (id) task["title"] += ("<@" + id + ">");
+        else task["title"] += nameList[j];
+        if (j < nameList.length - 1) task["title"] += ", ";
+      }
+    }
     if (note) task["text"] = "_ Note: " + note + " _";
     if (dueTime) {
       var ts = moment(dueTime, "YYYY/MM/DD HH:mm:ss").unix();
@@ -35,4 +45,3 @@ function postTaskList() {
   }
   postMessageWithAttachments("todo", taskList);
 }
-
